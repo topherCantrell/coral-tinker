@@ -1,0 +1,45 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:             tweet_printer
+# Required-Start:       $remote_fs $syslog
+# Required-Stop:        $remote_fs $syslog
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    Tweet stream deamon
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+start() {
+  log_action_begin_msg "Starting daemon"
+  cd /home/aiy/teachable
+  ./run_and_shutdown.sh &
+  log_action_end_msg
+}
+
+stop() {
+  log_action_begin_msg "Stopping daemon"
+  pkill -u root  run_teachable_a
+  kill $(ps x -u root  | grep teachable.py | grep -v grep | awk '{print $1}')
+  log_action_end_msg
+}
+
+case "$1" in
+    start)
+      start
+  ;;
+    stop)
+      stop
+  ;;
+    restart)
+      stop
+      start
+  ;;
+    *)
+      echo "Usage: teachable {start|stop|restart}"
+      exit 1
+  ;;
+esac
+exit 0
+
